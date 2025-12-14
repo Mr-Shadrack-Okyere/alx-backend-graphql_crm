@@ -6,10 +6,10 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    "graphene_django",
-    "crm",
+    "graphene_django",  # Add graphene-django
+    "crm",              # Add your crm app
 ]
 
 GRAPHENE = {
-    "SCHEMA": "alx_backend_graphql_crm.schema.schema"
+    "SCHEMA": "alx_backend_graphql_crm.schema.schema",  # Path to your schema
 }
