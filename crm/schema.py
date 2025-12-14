@@ -26,7 +26,7 @@ class OrderType(DjangoObjectType):
 
 
 # -----------------------
-# Query
+# Queries
 # -----------------------
 class Query(graphene.ObjectType):
     all_customers = graphene.List(CustomerType)
@@ -63,7 +63,8 @@ class CreateCustomer(graphene.Mutation):
         if phone and not re.match(r"^\+?\d{1,3}?[-.\s]?\d+$", phone):
             raise Exception("Invalid phone format")
 
-        customer = Customer.objects.create(name=name, email=email, phone=phone)
+        customer = Customer(name=name, email=email, phone=phone)
+        customer.save()  # explicit save
         return CreateCustomer(customer=customer, message="Customer created successfully")
 
 
@@ -92,9 +93,8 @@ class BulkCreateCustomers(graphene.Mutation):
                     if Customer.objects.filter(email=c.email).exists():
                         errors.append(f"{c.email} already exists")
                         continue
-                    customer = Customer.objects.create(
-                        name=c.name, email=c.email, phone=c.phone
-                    )
+                    customer = Customer(name=c.name, email=c.email, phone=c.phone)
+                    customer.save()  # explicit save
                     created.append(customer)
                 except Exception as e:
                     errors.append(str(e))
@@ -116,7 +116,8 @@ class CreateProduct(graphene.Mutation):
         if stock < 0:
             raise Exception("Stock cannot be negative")
 
-        product = Product.objects.create(name=name, price=price, stock=stock)
+        product = Product(name=name, price=price, stock=stock)
+        product.save()  # explicit save
         return CreateProduct(product=product)
 
 
@@ -139,13 +140,14 @@ class CreateOrder(graphene.Mutation):
             raise Exception("At least one valid product must be selected")
 
         total_amount = sum([p.price for p in products])
-        order = Order.objects.create(customer=customer, total_amount=total_amount)
+        order = Order(customer=customer, total_amount=total_amount)
+        order.save()  # explicit save
         order.products.set(products)
         return CreateOrder(order=order)
 
 
 # -----------------------
-# Main Mutation class
+# Main Mutation Class
 # -----------------------
 class Mutation(graphene.ObjectType):
     create_customer = CreateCustomer.Field()
