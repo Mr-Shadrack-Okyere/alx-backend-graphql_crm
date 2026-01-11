@@ -11,6 +11,10 @@ INSTALLED_APPS = [
     "crm",              # Add your crm app
 ]
 
+CRONJOBS = [
+    ('*/5 * * * *', 'crm.cron.log_crm_heartbeat'),
+]
+
 GRAPHENE = {
     "SCHEMA": "alx_backend_graphql_crm.schema.schema",  # Path to your schema
 }
