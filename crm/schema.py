@@ -154,3 +154,39 @@ class Mutation(graphene.ObjectType):
     bulk_create_customers = BulkCreateCustomers.Field()
     create_product = CreateProduct.Field()
     create_order = CreateOrder.Field()
+
+import graphene
+from django.db import transaction
+from crm.models import Product
+
+
+class ProductType(graphene.ObjectType):
+    id = graphene.ID()
+    name = graphene.String()
+    stock = graphene.Int()
+
+
+class UpdateLowStockProducts(graphene.Mutation):
+    success = graphene.String()
+    products = graphene.List(ProductType)
+
+    @classmethod
+    def mutate(cls, root, info):
+        updated_products = []
+
+        low_stock_products = Product.objects.filter(stock__lt=10)
+
+        with transaction.atomic():
+            for product in low_stock_products:
+                product.stock += 10
+                product.save()
+                updated_products.append(product)
+
+        return UpdateLowStockProducts(
+            success="Low stock products updated successfully",
+            products=updated_products
+        )
+
+
+class Mutation(graphene.ObjectType):
+    update_low_stock_products = UpdateLowStockProducts.Field()
