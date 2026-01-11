@@ -1,14 +1,15 @@
+import requests
 from datetime import datetime
 from gql import gql, Client
 from gql.transport.requests import RequestsHTTPTransport
 from celery import shared_task
 
 GRAPHQL_ENDPOINT = "http://localhost:8000/graphql"
-LOG_FILE = "/tmp/crm_report_log.txt"
+LOG_FILE = "/tmp/crmreportlog.txt"
 
 
 @shared_task
-def generate_crm_report():
+def generatecrmreport():
     transport = RequestsHTTPTransport(
         url=GRAPHQL_ENDPOINT,
         verify=True,
