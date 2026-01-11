@@ -5,6 +5,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_crontab",
 
     "graphene_django",  # Add graphene-django
     "crm",              # Add your crm app
